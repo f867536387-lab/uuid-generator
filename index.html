@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UUID Generator — Free Online UUID v4 Generator (Bulk, No Sign-up)</title>
+<meta name="description" content="Generate UUID v4 instantly for free. Bulk generate up to 100 UUIDs, copy or download in one click. No sign-up, runs 100% in your browser — nothing is stored or uploaded.">
+<link rel="canonical" href="https://uuid-generator-iota.vercel.app/">
+<meta property="og:title" content="UUID Generator — Free Online UUID v4 Generator">
+<meta property="og:description" content="Bulk generate UUID v4 instantly. Copy or download in one click. Free, no sign-up, fully private.">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"UUID Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+"featureList":"Bulk UUID v4 generation, Copy to clipboard, Download as .txt, Uppercase toggle, Hyphens toggle"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is a UUID?","acceptedAnswer":{"@type":"Answer","text":"A UUID (Universally Unique Identifier) is a 128-bit identifier, shown as 32 hexadecimal digits in 5 groups separated by hyphens, e.g. 550e8400-e29b-41d4-a716-446655440000. UUIDs are used as database primary keys, session IDs, transaction IDs and more."}},
+{"@type":"Question","name":"What is UUID v4?","acceptedAnswer":{"@type":"Answer","text":"UUID version 4 is generated from random numbers. It has 122 bits of randomness, so the chance of a collision is effectively zero for practical purposes."}},
+{"@type":"Question","name":"Is this UUID generator safe? Does it store my UUIDs?","acceptedAnswer":{"@type":"Answer","text":"Yes, it is safe. Generation happens entirely in your browser using the Web Crypto API (crypto.randomUUID). No UUID is sent to or stored on any server."}},
+{"@type":"Question","name":"How many UUIDs can I generate at once?","acceptedAnswer":{"@type":"Answer","text":"You can bulk generate between 1 and 100 UUIDs per batch, then copy them all or download them as a .txt file, one per line."}}]}
+</script>
+<style>
+:root{--bg:#0f1115;--card:#171a21;--line:#262b36;--text:#e8eaf0;--muted:#9aa3b2;--accent:#3b82f6}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:820px;margin:0 auto;padding:32px 20px 64px}
+header{text-align:center;margin-bottom:28px}h1{font-size:34px;margin:0 0 10px}p.lead{color:var(--muted);margin:0;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px}
+label{font-size:14px;color:var(--muted);display:block;margin-bottom:6px}
+input[type=number]{width:110px;padding:10px;border-radius:8px;border:1px solid var(--line);background:#0f1115;color:var(--text);font-size:16px}
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:end;margin-bottom:16px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--text)}
+button{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:12px 22px;font-size:16px;cursor:pointer}
+button.secondary{background:#232833}
+textarea{width:100%;min-height:190px;background:#0f1115;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.7}
+.actions{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+section h2{font-size:22px;margin:28px 0 10px}section p,section li{color:var(--muted);line-height:1.75}
+footer{color:var(--muted);font-size:13px;text-align:center;margin-top:40px}
+code{background:#232833;padding:2px 6px;border-radius:5px;color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>UUID Generator</h1>
+<p class="lead">Generate UUID v4 instantly — bulk, free, no sign-up.<br>Everything runs in your browser. Nothing is uploaded or stored.</p>
+</header>
+
+<div class="card">
+<div class="row">
+<div><label for="count">How many UUIDs? (1–100)</label><input type="number" id="count" value="1" min="1" max="100"></div>
+<label class="check"><input type="checkbox" id="upper"> UPPERCASE</label>
+<label class="check"><input type="checkbox" id="hyphens" checked> Hyphens</label>
+<button id="gen">Generate UUIDs</button>
+</div>
+<textarea id="out" readonly placeholder="Your UUIDs will appear here"></textarea>
+<div class="actions">
+<button class="secondary" id="copy">Copy all</button>
+<button class="secondary" id="download">Download .txt</button>
+<span id="msg" style="color:var(--muted);align-self:center"></span>
+</div>
+</div>
+
+<section>
+<h2>What is a UUID?</h2>
+<p>A UUID (Universally Unique Identifier) is a 128-bit identifier displayed as 32 hexadecimal digits in five groups separated by hyphens — for example <code>550e8400-e29b-41d4-a716-446655440000</code>. Developers use UUIDs as database primary keys, session identifiers, request/trace IDs, file names, and idempotency keys, because they can be generated anywhere without a central authority and still stay unique.</p>
+<h2>Why UUID v4?</h2>
+<p>UUID version 4 is built from cryptographically random data (122 random bits). The probability of generating the same UUID twice is so low that it is treated as impossible in practice — you would need to generate billions per second for centuries to expect a single collision.</p>
+<h2>How to use this generator</h2>
+<ol>
+<li>Choose how many UUIDs you need (1 to 100).</li>
+<li>Optionally switch on UPPERCASE or turn hyphens off.</li>
+<li>Click <b>Generate UUIDs</b>, then copy them all or download a .txt file (one UUID per line).</li>
+</ol>
+<h2>FAQ</h2>
+<p><b>Is it free?</b> Yes, completely free with no sign-up.<br>
+<b>Is it private?</b> Yes. This page uses your browser's Web Crypto API (<code>crypto.randomUUID()</code>). No UUID ever leaves your device.<br>
+<b>Can I use these UUIDs in production?</b> Yes. They are standard RFC 4122 version 4 UUIDs, suitable for databases and APIs.</p>
+</section>
+<footer>Free UUID Generator · UUID v4 · Runs 100% locally in your browser</footer>
+</div>
+<script>
+function makeUUID(){
+  if(crypto.randomUUID) return crypto.randomUUID();
+  const b=new Uint8Array(16); crypto.getRandomValues(b);
+  b[6]=(b[6]&0x0f)|0x40; b[8]=(b[8]&0x3f)|0x80;
+  const h=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
+function generate(){
+  let n=Math.min(100,Math.max(1,parseInt(document.getElementById('count').value)||1));
+  const upper=document.getElementById('upper').checked;
+  const hyph=document.getElementById('hyphens').checked;
+  const list=[];
+  for(let i=0;i<n;i++){ let u=makeUUID(); if(!hyph)u=u.replaceAll('-',''); if(upper)u=u.toUpperCase(); list.push(u); }
+  document.getElementById('out').value=list.join('\n');
+  document.getElementById('msg').textContent=n+' UUID'+(n>1?'s':'')+' generated';
+}
+document.getElementById('gen').addEventListener('click',generate);
+document.getElementById('copy').addEventListener('click',async()=>{
+  const v=document.getElementById('out').value; if(!v)return;
+  await navigator.clipboard.writeText(v);
+  document.getElementById('msg').textContent='Copied to clipboard';
+});
+document.getElementById('download').addEventListener('click',()=>{
+  const v=document.getElementById('out').value; if(!v)return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([v],{type:'text/plain'})); a.download='uuids.txt'; a.click(); URL.revokeObjectURL(a.href);
+});
+generate();
+</script>
+</body>
+</html>
