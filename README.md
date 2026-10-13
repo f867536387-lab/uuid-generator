@@ -12,3 +12,7 @@ A zero-dependency static site built by following CloudHu's outbound tutorial
 - Optional: buy a domain on Spaceship, add it in Vercel, switch nameservers to Vercel DNS.
 - Submit the domain + /sitemap.xml in Google Search Console and Bing Webmaster.
   For GSC TXT verification, add the TXT value and redeploy / push to GitHub.
+
+## Alternative deploy: GitHub Pages (no phone verification)
+Repo Settings -> Pages -> Build and deployment -> Source: Deploy from a branch -> Branch: main / (root) -> Save.
+Live at: https://f867536387-lab.github.io/uuid-generator/
