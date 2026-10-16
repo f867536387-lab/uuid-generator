@@ -15,4 +15,4 @@ A zero-dependency static site built by following CloudHu's outbound tutorial
 
 ## Alternative deploy: GitHub Pages (no phone verification)
 Repo Settings -> Pages -> Build and deployment -> Source: Deploy from a branch -> Branch: main / (root) -> Save.
-Live at: https://f867536387-lab.github.io/uuid-generator/
+Live at: https://uuidsmith.com/
