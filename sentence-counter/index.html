@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentence Counter — Free Online Sentence, Word & Character Counter</title>
+<meta name="description" content="Count sentences instantly for free — plus words, characters and paragraphs. Live results as you type, no sign-up, and your text never leaves your browser.">
+<link rel="canonical" href="https://uuidsmith.com/sentence-counter">
+<meta property="og:title" content="Sentence Counter — Free Online Sentence, Word & Character Counter">
+<meta property="og:description" content="Count sentences, words, characters and paragraphs live as you type. Free, no sign-up, fully private.">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Sentence Counter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+"featureList":"Sentence counter, Word counter, Character counter with and without spaces, Paragraph counter, Reading time and speaking time estimates"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How does the sentence counter work?","acceptedAnswer":{"@type":"Answer","text":"It counts sentences by detecting sentence-ending punctuation (. ! ? …) in your text. Common abbreviations such as Dr., Mr. and e.g., and decimal numbers such as 3.14, are handled so their periods are not mistaken for sentence endings. A final line of text without ending punctuation still counts as one sentence."}},
+{"@type":"Question","name":"Does this tool count words and characters too?","acceptedAnswer":{"@type":"Answer","text":"Yes. Alongside sentences it shows live counts of words, characters (with and without spaces), and paragraphs, plus estimated reading time and speaking time."}},
+{"@type":"Question","name":"Is my text uploaded or stored?","acceptedAnswer":{"@type":"Answer","text":"No. Counting happens entirely in your browser with JavaScript. Your text is never sent to or stored on any server."}},
+{"@type":"Question","name":"Why count sentences?","acceptedAnswer":{"@type":"Answer","text":"Sentence count is the basis of average sentence length, a core readability signal. Essays, speeches, articles and SEO content are easier to read when most sentences stay under about 20 words. Teachers also use sentence counts to check writing assignments."}},
+{"@type":"Question","name":"Is the sentence counter free?","acceptedAnswer":{"@type":"Answer","text":"Yes, completely free with no sign-up and no limits on text length or how often you use it."}}]}
+</script>
+<style>
+:root{--bg:#0f1115;--card:#171a21;--line:#262b36;--text:#e8eaf0;--muted:#9aa3b2;--accent:#3b82f6}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:820px;margin:0 auto;padding:32px 20px 64px}
+header{text-align:center;margin-bottom:28px}h1{font-size:34px;margin:0 0 10px}p.lead{color:var(--muted);margin:0;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px}
+button{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:12px 22px;font-size:16px;cursor:pointer}
+button.secondary{background:#232833}
+textarea{width:100%;min-height:220px;background:#0f1115;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:14px;font-size:16px;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:16px}
+.stat{background:#0f1115;border:1px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center}
+.stat .num{font-size:28px;font-weight:700}
+.stat.primary .num{color:var(--accent);font-size:36px}
+.stat .lab{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.04em}
+.actions{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;align-items:center}
+section h2{font-size:22px;margin:28px 0 10px}section p,section li{color:var(--muted);line-height:1.75}
+footer{color:var(--muted);font-size:13px;text-align:center;margin-top:40px}
+code{background:#232833;padding:2px 6px;border-radius:5px;color:var(--text)}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Sentence Counter</h1>
+<p class="lead">Count sentences instantly — plus words, characters and paragraphs.<br>Live results as you type. Everything runs in your browser; your text is never uploaded.</p>
+</header>
+
+<div class="card">
+<textarea id="text" placeholder="Type or paste your text here…"></textarea>
+<div class="stats">
+<div class="stat primary"><div class="num" id="s-sentences">0</div><div class="lab">Sentences</div></div>
+<div class="stat"><div class="num" id="s-words">0</div><div class="lab">Words</div></div>
+<div class="stat"><div class="num" id="s-chars">0</div><div class="lab">Characters</div></div>
+<div class="stat"><div class="num" id="s-charsws">0</div><div class="lab">Chars (no spaces)</div></div>
+<div class="stat"><div class="num" id="s-paras">0</div><div class="lab">Paragraphs</div></div>
+<div class="stat"><div class="num" id="s-avg">0</div><div class="lab">Words / sentence</div></div>
+<div class="stat"><div class="num" id="s-read">0s</div><div class="lab">Reading time</div></div>
+<div class="stat"><div class="num" id="s-speak">0s</div><div class="lab">Speaking time</div></div>
+</div>
+<div class="actions">
+<button class="secondary" id="sample">Load sample text</button>
+<button class="secondary" id="clear">Clear</button>
+<span id="msg" style="color:var(--muted)"></span>
+</div>
+</div>
+
+<section>
+<h2>What is a sentence counter?</h2>
+<p>A sentence counter counts how many sentences are in a piece of text. Paste or type anything — an essay, a speech, an article, a social media draft — and the count updates live as you edit. This page also counts words, characters (with and without spaces) and paragraphs, so it works as a combined sentence, word and character counter in one place.</p>
+<h2>How sentences are counted</h2>
+<p>Sentences are detected by their ending punctuation: periods, exclamation marks, question marks and ellipses. Two common traps are handled for you: abbreviations such as <code>Dr.</code>, <code>Mr.</code> and <code>e.g.</code> do not end a sentence, and neither does the decimal point in numbers like <code>3.14</code>. If your text ends without punctuation, the last fragment still counts as one sentence.</p>
+<h2>Why count sentences?</h2>
+<p>Sentence count drives <b>average sentence length</b> (words ÷ sentences), one of the simplest readability checks. Writing that averages roughly 15–20 words per sentence is noticeably easier to follow than writing averaging 30+. Writers use a sentence counter to spot run-on passages, teachers use it to verify assignment requirements, and speakers use the speaking-time estimate to rehearse talks and presentations.</p>
+<h2>FAQ</h2>
+<p><b>Is it free?</b> Yes, completely free, no sign-up, no length limit.<br>
+<b>Is my text private?</b> Yes. All counting happens locally in your browser — nothing is sent to a server or stored anywhere.<br>
+<b>Does it work for essays and speeches?</b> Yes. The reading time (about 200 words per minute) and speaking time (about 130 words per minute) estimates are shown alongside the counts.</p>
+<h2>More free tools</h2>
+<p><a href="/">UUID Generator</a> — generate UUID v4 in bulk, free and private.</p>
+</section>
+<footer>Free Sentence Counter · Runs 100% locally in your browser · Part of <a href="/">uuidsmith.com</a></footer>
+</div>
+<script>
+const SAMPLE="Dr. Smith checked the results at 3.30 p.m. and smiled. The new method worked 2.5 times faster than the old one! Was anyone surprised? Not really. Clear writing is not an accident. It comes from short, honest sentences — and from counting them once in a while.";
+function countSentences(text){
+  const t=text.trim();
+  if(!t) return 0;
+  const M='\u0001';
+  let masked=t.replace(/(\d)\.(\d)/g,'$1'+M+'$2').replace(/(\d)\.(\d)/g,'$1'+M+'$2');
+  // Titles & place abbreviations: their periods never end a sentence here
+  masked=masked.replace(/\b(?:Mr|Mrs|Ms|Dr|St|vs|U\.S|U\.K)\./gi,m=>m.replace(/\./g,M));
+  // Latin/time abbreviations: mask fully when mid-sentence (next word lowercase,
+  // a comma follows, or text ends); before a capital, keep the final period live
+  masked=masked.replace(/\b(?:e\.g|i\.e|etc|a\.m|p\.m)\./gi,(m,off,str)=>{
+    const next=str.slice(off+m.length).replace(/^\s+/,'').charAt(0);
+    if(next===''||(next>='a'&&next<='z')||next===',') return m.replace(/\./g,M);
+    return m.slice(0,-1).replace(/\./g,M)+'.';
+  });
+  const parts=masked.match(/[^.!?…]+[.!?…]+["'")\]]*\s*/g);
+  let n=parts?parts.length:0;
+  const rest=masked.replace(/[^.!?…]+[.!?…]+["'")\]]*\s*/g,'').trim();
+  if(/[A-Za-z0-9]/.test(rest)) n+=1;
+  return n;
+}
+function fmtTime(sec){
+  if(sec<=0) return '0s';
+  if(sec<60) return Math.round(sec)+'s';
+  const m=Math.floor(sec/60), s=Math.round(sec%60);
+  return s? m+'m '+s+'s' : m+'m';
+}
+function update(){
+  const text=document.getElementById('text').value;
+  const words=(text.match(/[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu)||[]).length;
+  const sentences=countSentences(text);
+  const chars=text.length;
+  const charsNoSpaces=text.replace(/\s/g,'').length;
+  const paras=text.trim()? text.split(/\n\s*\n/).filter(p=>p.trim().length>0).length : 0;
+  document.getElementById('s-sentences').textContent=sentences;
+  document.getElementById('s-words').textContent=words;
+  document.getElementById('s-chars').textContent=chars;
+  document.getElementById('s-charsws').textContent=charsNoSpaces;
+  document.getElementById('s-paras').textContent=paras;
+  document.getElementById('s-avg').textContent=sentences? (words/sentences).toFixed(1) : '0';
+  document.getElementById('s-read').textContent=fmtTime(words/200*60);
+  document.getElementById('s-speak').textContent=fmtTime(words/130*60);
+}
+document.getElementById('text').addEventListener('input',update);
+document.getElementById('sample').addEventListener('click',()=>{document.getElementById('text').value=SAMPLE;update();});
+document.getElementById('clear').addEventListener('click',()=>{document.getElementById('text').value='';update();});
+update();
+</script>
+</body>
+</html>
