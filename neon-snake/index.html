@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Neon Snake — Energy Brawl | Free Online Snake Game</title>
+<meta name="description" content="Play Neon Snake: Energy Brawl free in your browser. Eat energy orbs, grab random power-ups (shield, magnet, slow-mo, double points, frenzy) and dodge moving obstacles. No sign-up, mobile-friendly.">
+<link rel="canonical" href="https://uuidsmith.com/neon-snake">
+<meta property="og:title" content="Neon Snake — Energy Brawl">
+<meta property="og:description" content="A neon snake game with power-ups and moving obstacles. Free, no sign-up, runs 100% in your browser.">
+<meta property="og:type" content="website">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; }
+  body {
+    background:#05060f radial-gradient(1200px 800px at 50% -10%, #101736 0%, #05060f 55%);
+    color:#dbeafe; font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    display:flex; flex-direction:column; align-items:center; min-height:100%;
+    padding:10px 10px 16px; overflow-x:hidden;
+  }
+  h1 {
+    font-size:20px; letter-spacing:2px; margin:4px 0 2px; text-align:center;
+    color:#67e8f9; text-shadow:0 0 12px rgba(34,211,238,.9), 0 0 34px rgba(34,211,238,.45);
+  }
+  h1 .pink { color:#f0abfc; text-shadow:0 0 12px rgba(232,121,249,.9), 0 0 34px rgba(232,121,249,.45); }
+  .hud {
+    width:min(94vw, 430px); display:flex; justify-content:space-between; align-items:center;
+    margin:6px 0 4px; font-size:14px;
+  }
+  .hud b { color:#fde68a; font-size:17px; text-shadow:0 0 10px rgba(251,191,36,.7); }
+  .hud .lab { color:#94a3b8; font-size:12px; margin-right:4px; }
+  #effects { width:min(94vw,430px); min-height:24px; display:flex; gap:6px; flex-wrap:wrap; margin:2px 0 4px; }
+  .chip {
+    font-size:12px; padding:3px 9px; border-radius:999px; border:1px solid rgba(103,232,249,.5);
+    color:#a5f3fc; background:rgba(8,47,73,.55); box-shadow:0 0 10px rgba(34,211,238,.25) inset;
+  }
+  .chip.warn { border-color:rgba(240,171,252,.6); color:#f5d0fe; }
+  .stage { position:relative; width:min(94vw, 430px); }
+  canvas {
+    width:100%; display:block; border-radius:14px; touch-action:none;
+    background:linear-gradient(180deg,#070b1d 0%, #05060f 100%);
+    border:1px solid rgba(103,232,249,.35);
+    box-shadow:0 0 24px rgba(34,211,238,.22), 0 0 70px rgba(59,7,100,.35), inset 0 0 40px rgba(2,6,23,.8);
+  }
+  .overlay {
+    position:absolute; inset:0; border-radius:14px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:12px; text-align:center; padding:20px;
+    background:rgba(3,5,16,.72); backdrop-filter:blur(2px);
+  }
+  .overlay h2 { font-size:24px; color:#f0abfc; text-shadow:0 0 16px rgba(232,121,249,.8); letter-spacing:3px; }
+  .overlay p { font-size:14px; color:#cbd5e1; line-height:1.7; }
+  .overlay .big { font-size:30px; color:#fde68a; text-shadow:0 0 14px rgba(251,191,36,.8); }
+  .btn {
+    appearance:none; border:1px solid rgba(103,232,249,.7); color:#031525; font-weight:700;
+    background:linear-gradient(180deg,#67e8f9,#22d3ee); padding:11px 30px; border-radius:999px;
+    font-size:16px; letter-spacing:2px; cursor:pointer; box-shadow:0 0 18px rgba(34,211,238,.55);
+  }
+  .btn:active { transform:scale(.96); }
+  .btn.ghost { background:transparent; color:#a5f3fc; box-shadow:none; font-size:14px; padding:8px 20px; }
+  .bar { width:min(94vw,430px); display:flex; justify-content:space-between; margin-top:10px; gap:8px; }
+  .bar .btn { flex:1; padding:9px 0; font-size:14px; }
+  .help { width:min(94vw,430px); margin-top:10px; font-size:12.5px; color:#94a3b8; line-height:1.8; }
+  .help b { color:#a5f3fc; font-weight:600; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+  <h1>Neon Snake <span class="pink">· Energy Brawl</span></h1>
+  <p style="text-align:center;color:#94a3b8;font-size:13px;margin-bottom:2px">A neon snake game with random power-ups and moving obstacles. Free to play — no sign-up.</p>
+
+  <div class="hud">
+    <div><span class="lab">Score</span><b id="score">0</b></div>
+    <div><span class="lab">Length</span><b id="len">5</b></div>
+    <div><span class="lab">Best</span><b id="best">0</b></div>
+  </div>
+  <div id="effects"></div>
+
+  <div class="stage">
+    <canvas id="cv" width="360" height="540"></canvas>
+
+    <div class="overlay" id="ovStart">
+      <h2>Energy Brawl</h2>
+      <p>Eat energy orbs to grow. Dodge the moving obstacles.<br>Random power-ups: Shield · Magnet · Slow-Mo · Double · Frenzy<br>Swipe or use the arrow keys to steer.</p>
+      <button class="btn" id="btnStart">Start Game</button>
+    </div>
+
+    <div class="overlay hidden" id="ovOver">
+      <h2>Game Over</h2>
+      <div class="big" id="finalScore">0</div>
+      <p id="overTip">You hit the wall.</p>
+      <button class="btn" id="btnAgain">Play Again</button>
+    </div>
+
+    <div class="overlay hidden" id="ovPause">
+      <h2>Paused</h2>
+      <button class="btn" id="btnResume">Resume</button>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="btn ghost" id="btnPause">⏸ Pause</button>
+    <button class="btn ghost" id="btnRestart">↻ Restart</button>
+  </div>
+
+  <div class="help">
+    <b>Power-ups</b>　🛡 Shield: survives one fatal hit　🧲 Magnet: auto-collects nearby orbs for 8s　🐢 Slow-Mo: 6s of slow motion　⭐ Double: 2× score for 10s　⚡ Frenzy: 7s faster + 2× score — don't crash!<br>
+    <b>Rules</b>　Golden orbs are worth +50 and add 2 segments. Obstacles move, and everything speeds up as you score. Hitting a wall, yourself, or an obstacle ends the run (a Shield saves you once).
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var COLS = 18, ROWS = 27;
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  // 高清渲染：按设备像素比缩放
+  function fitCanvas(){
+    var w = cv.clientWidth, h = Math.round(w * ROWS / COLS);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.style.height = h + 'px';
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx.setTransform(cv.width / COLS, 0, 0, cv.height / ROWS, 0, 0);
+  }
+
+  var scoreEl = document.getElementById('score'), lenEl = document.getElementById('len'),
+      bestEl = document.getElementById('best'), fxEl = document.getElementById('effects');
+  var ovStart = document.getElementById('ovStart'), ovOver = document.getElementById('ovOver'),
+      ovPause = document.getElementById('ovPause'), finalScore = document.getElementById('finalScore'),
+      overTip = document.getElementById('overTip');
+
+  var BEST_KEY = 'neon-snake-best';
+  var best = 0; try { best = parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0; } catch(e){}
+  bestEl.textContent = best;
+
+  var S = null; // 游戏状态
+  function newState(){
+    return {
+      snake: [{x:8,y:20},{x:8,y:21},{x:8,y:22},{x:8,y:23},{x:8,y:24}],
+      dir: {x:0,y:-1}, queue: [],
+      score: 0, grow: 0,
+      orb: null, gold: null, goldTimer: 0,
+      item: null, itemTimer: 0, spawnTimer: 5,
+      obstacles: [
+        {x:3,  y:8,  dx:1, dy:0, len:2},
+        {x:13, y:14, dx:-1,dy:0, len:2},
+        {x:6,  y:5,  dx:0, dy:1, len:2}
+      ],
+      fx: { shield:false, magnet:0, slow:0, dbl:0, frenzy:0 },
+      tickMs: 150, acc: 0, steps: 0,
+      over: false, paused: false, started: false
+    };
+  }
+
+  function cellFree(x, y, ignoreOrb){
+    if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return false;
+    for (var i = 0; i < S.snake.length; i++) if (S.snake[i].x === x && S.snake[i].y === y) return false;
+    for (var j = 0; j < S.obstacles.length; j++){
+      var o = S.obstacles[j];
+      for (var k = 0; k < o.len; k++) if (o.x + o.dx * 0 + (o.dy !== 0 ? 0 : k) === x && o.y + (o.dx !== 0 ? 0 : k) === y) return false;
+      // 障碍为横/竖 2 格：上面循环按方向展开
+    }
+    if (!ignoreOrb){
+      if (S.orb && S.orb.x === x && S.orb.y === y) return false;
+      if (S.gold && S.gold.x === x && S.gold.y === y) return false;
+      if (S.item && S.item.x === x && S.item.y === y) return false;
+    }
+    return true;
+  }
+  function obstacleCells(o){
+    var cells = [];
+    for (var k = 0; k < o.len; k++){
+      cells.push({ x: o.x + (o.dy !== 0 ? 0 : k), y: o.y + (o.dx !== 0 ? 0 : k) });
+    }
+    return cells;
+  }
+  function randFreeCell(){
+    for (var t = 0; t < 200; t++){
+      var x = Math.floor(Math.random() * COLS), y = Math.floor(Math.random() * ROWS);
+      if (cellFree(x, y, false)) return {x:x, y:y};
+    }
+    return null;
+  }
+  function placeOrb(){ var c = randFreeCell(); if (c) S.orb = c; }
+  function placeGold(){ var c = randFreeCell(); if (c){ S.gold = c; S.goldTimer = 9; } }
+  var ITEM_TYPES = [
+    {k:'shield', icon:'🛡', name:'Shield'},
+    {k:'magnet', icon:'🧲', name:'Magnet'},
+    {k:'slow',   icon:'🐢', name:'Slow-Mo'},
+    {k:'dbl',    icon:'⭐', name:'Double'},
+    {k:'frenzy', icon:'⚡', name:'Frenzy'}
+  ];
+  function placeItem(){
+    var c = randFreeCell(); if (!c) return;
+    var t = ITEM_TYPES[Math.floor(Math.random() * ITEM_TYPES.length)];
+    S.item = {x:c.x, y:c.y, k:t.k, icon:t.icon, name:t.name};
+    S.itemTimer = 8;
+  }
+
+  function mult(){ return (S.fx.dbl > 0 || S.fx.frenzy > 0) ? 2 : 1; }
+  function speedMs(){
+    var base = S.tickMs - Math.min(55, Math.floor(S.score / 150) * 5);
+    if (S.fx.slow > 0) base += 55;
+    if (S.fx.frenzy > 0) base -= 45;
+    return Math.max(70, base);
+  }
+
+  function die(reason){
+    if (S.fx.shield){
+      S.fx.shield = false;
+      flashFx();
+      return false;
+    }
+    S.over = true;
+    finalScore.textContent = S.score;
+    overTip.textContent = reason + ' Length: ' + S.snake.length + '.';
+    if (S.score > best){
+      best = S.score; bestEl.textContent = best;
+      try { localStorage.setItem(BEST_KEY, String(best)); } catch(e){}
+      overTip.textContent += ' New record!';
+    }
+    ovOver.classList.remove('hidden');
+    return true;
+  }
+  var flash = 0;
+  function flashFx(){ flash = 6; }
+
+  function step(){
+    // 方向队列
+    while (S.queue.length){
+      var d = S.queue.shift();
+      if (d.x !== -S.dir.x || d.y !== -S.dir.y){ S.dir = d; break; }
+    }
+    var head = { x: S.snake[0].x + S.dir.x, y: S.snake[0].y + S.dir.y };
+
+    // 撞墙
+    if (head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS){ die('You hit the wall.'); return; }
+    // 撞障碍
+    for (var j = 0; j < S.obstacles.length; j++){
+      var cells = obstacleCells(S.obstacles[j]);
+      for (var c = 0; c < cells.length; c++){
+        if (cells[c].x === head.x && cells[c].y === head.y){
+          if (S.fx.shield){ S.obstacles.splice(j,1); }
+          die('You smashed into a moving obstacle.'); return;
+        }
+      }
+    }
+    // 撞自己（尾巴将移走的那格除外）
+    var lim = S.grow > 0 ? S.snake.length : S.snake.length - 1;
+    for (var i = 0; i < lim; i++){
+      if (S.snake[i].x === head.x && S.snake[i].y === head.y){ die('You bit yourself.'); return; }
+    }
+
+    S.snake.unshift(head);
+    if (S.grow > 0) S.grow--; else S.snake.pop();
+
+    // 吃普通能量豆
+    if (S.orb && head.x === S.orb.x && head.y === S.orb.y){
+      S.score += 10 * mult(); S.grow += 1; placeOrb();
+      maybeGold();
+    }
+    // 吃金豆
+    if (S.gold && head.x === S.gold.x && head.y === S.gold.y){
+      S.score += 50 * mult(); S.grow += 2; S.gold = null;
+    }
+    // 吃道具
+    if (S.item && head.x === S.item.x && head.y === S.item.y){
+      applyItem(S.item.k); S.item = null;
+    }
+    // 磁铁：吸取 2 格半径内的豆
+    if (S.fx.magnet > 0){
+      [['orb', 10, 1], ['gold', 50, 2]].forEach(function(cfg){
+        var o = S[cfg[0]];
+        if (o && Math.abs(o.x - head.x) + Math.abs(o.y - head.y) <= 2){
+          S.score += cfg[1] * mult(); S.grow += cfg[2];
+          if (cfg[0] === 'orb') placeOrb(); else S.gold = null;
+        }
+      });
+    }
+    // 障碍移动（每 2 步移动 1 格，后期每步）
+    var obEvery = S.score >= 300 ? 1 : 2;
+    if (S.steps % obEvery === 0) moveObstacles();
+
+    S.steps++;
+    updateFx(1);
+    scoreEl.textContent = S.score;
+    lenEl.textContent = S.snake.length;
+    renderFxChips();
+  }
+
+  function maybeGold(){
+    if (!S.gold && Math.random() < 0.16) placeGold();
+  }
+  function applyItem(k){
+    if (k === 'shield') S.fx.shield = true;
+    else if (k === 'magnet') S.fx.magnet = 8;
+    else if (k === 'slow') S.fx.slow = 6;
+    else if (k === 'dbl') S.fx.dbl = 10;
+    else if (k === 'frenzy') S.fx.frenzy = 7;
+  }
+  function moveObstacles(){
+    S.obstacles.forEach(function(o){
+      var nx = o.x + o.dx, ny = o.y + o.dy;
+      var tailX = o.x + (o.dy !== 0 ? 0 : o.len - 1), tailY = o.y + (o.dx !== 0 ? 0 : o.len - 1);
+      var hx = o.dx > 0 ? tailX + 1 : nx, hy = o.dy > 0 ? tailY + 1 : ny;
+      if (hx < 0 || hy < 0 || hx >= COLS || hy >= ROWS){ o.dx = -o.dx; o.dy = -o.dy; return; }
+      o.x = nx; o.y = ny;
+      // 障碍压到蛇身也算撞（护盾可免）
+      var cells = obstacleCells(o);
+      for (var i = 1; i < S.snake.length; i++){
+        for (var c = 0; c < cells.length; c++){
+          if (cells[c].x === S.snake[i].x && cells[c].y === S.snake[i].y && !S.over){
+            if (S.fx.shield){ S.fx.shield = false; S.obstacles.splice(S.obstacles.indexOf(o), 1); flashFx(); }
+            else die('A moving obstacle got you.');
+            return;
+          }
+        }
+      }
+    });
+  }
+  function updateFx(tick){
+    var dt = speedMs() / 1000 * tick;
+    ['magnet','slow','dbl','frenzy'].forEach(function(k){ if (S.fx[k] > 0) S.fx[k] = Math.max(0, S.fx[k] - dt); });
+    if (S.gold){ S.goldTimer -= dt; if (S.goldTimer <= 0) S.gold = null; }
+    if (S.item){ S.itemTimer -= dt; if (S.itemTimer <= 0) S.item = null; }
+    S.spawnTimer -= dt;
+    if (S.spawnTimer <= 0){ if (!S.item) placeItem(); S.spawnTimer = 6 + Math.random() * 4; }
+  }
+  function renderFxChips(){
+    var chips = [];
+    if (S.fx.shield) chips.push('<span class="chip">🛡 Shield</span>');
+    if (S.fx.magnet > 0) chips.push('<span class="chip">🧲 Magnet ' + Math.ceil(S.fx.magnet) + 's</span>');
+    if (S.fx.slow > 0) chips.push('<span class="chip">🐢 Slow-Mo ' + Math.ceil(S.fx.slow) + 's</span>');
+    if (S.fx.dbl > 0) chips.push('<span class="chip warn">⭐ Double ' + Math.ceil(S.fx.dbl) + 's</span>');
+    if (S.fx.frenzy > 0) chips.push('<span class="chip warn">⚡ Frenzy ' + Math.ceil(S.fx.frenzy) + 's</span>');
+    fxEl.innerHTML = chips.join('');
+  }
+
+  // ---------- 渲染 ----------
+  function rr(x, y, r){
+    var pad = 0.06;
+    ctx.beginPath();
+    ctx.roundRect(x + pad, y + pad, 1 - pad * 2, 1 - pad * 2, r);
+    ctx.fill();
+  }
+  function draw(){
+    ctx.clearRect(0, 0, COLS, ROWS);
+    // 网格
+    ctx.strokeStyle = 'rgba(56,89,199,0.13)'; ctx.lineWidth = 0.02;
+    ctx.beginPath();
+    for (var gx = 1; gx < COLS; gx++){ ctx.moveTo(gx, 0); ctx.lineTo(gx, ROWS); }
+    for (var gy = 1; gy < ROWS; gy++){ ctx.moveTo(0, gy); ctx.lineTo(COLS, gy); }
+    ctx.stroke();
+
+    // 障碍
+    S.obstacles.forEach(function(o){
+      obstacleCells(o).forEach(function(c){
+        ctx.fillStyle = '#7c3aed';
+        ctx.shadowColor = 'rgba(167,139,250,0.9)'; ctx.shadowBlur = 12;
+        rr(c.x, c.y, 0.18);
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = 'rgba(237,233,254,0.85)';
+        ctx.fillRect(c.x + 0.36, c.y + 0.36, 0.28, 0.28);
+      });
+    });
+    // 能量豆
+    if (S.orb){
+      ctx.fillStyle = '#22d3ee'; ctx.shadowColor = '#22d3ee'; ctx.shadowBlur = 16;
+      ctx.beginPath(); ctx.arc(S.orb.x + 0.5, S.orb.y + 0.5, 0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.beginPath(); ctx.arc(S.orb.x + 0.42, S.orb.y + 0.42, 0.09, 0, Math.PI * 2); ctx.fill();
+    }
+    // 金豆
+    if (S.gold){
+      ctx.fillStyle = '#fbbf24'; ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 20;
+      ctx.beginPath(); ctx.arc(S.gold.x + 0.5, S.gold.y + 0.5, 0.36, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    // 道具
+    if (S.item){
+      ctx.font = '0.92px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.shadowColor = '#e879f9'; ctx.shadowBlur = 14;
+      ctx.fillText(S.item.icon, S.item.x + 0.5, S.item.y + 0.55);
+      ctx.shadowBlur = 0;
+    }
+    // 蛇
+    for (var i = S.snake.length - 1; i >= 0; i--){
+      var s = S.snake[i], t = i / Math.max(1, S.snake.length - 1);
+      var hue = 190 - t * 70; // 头青 → 尾紫
+      ctx.fillStyle = 'hsl(' + hue + ',95%,' + (62 - t * 14) + '%)';
+      if (i === 0){ ctx.shadowColor = '#22d3ee'; ctx.shadowBlur = flash > 0 ? 26 : 16; }
+      rr(s.x, s.y, i === 0 ? 0.3 : 0.24);
+      ctx.shadowBlur = 0;
+      if (i === 0){
+        // 眼睛（朝向）
+        var ex = S.dir.x, ey = S.dir.y;
+        var cx = s.x + 0.5 + ex * 0.14, cy = s.y + 0.5 + ey * 0.14;
+        var px = ey !== 0 ? 0.17 : 0, py = ex !== 0 ? 0.17 : 0;
+        ctx.fillStyle = '#04121f';
+        ctx.beginPath(); ctx.arc(cx + px, cy + py, 0.075, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx - px, cy - py, 0.075, 0, Math.PI * 2); ctx.fill();
+        if (S.fx.shield){
+          ctx.strokeStyle = 'rgba(125,211,252,0.95)'; ctx.lineWidth = 0.06;
+          ctx.beginPath(); ctx.arc(s.x + 0.5, s.y + 0.5, 0.62, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+    }
+    if (flash > 0) flash--;
+  }
+
+  // ---------- 主循环 ----------
+  var lastTs = 0;
+  function loop(ts){
+    requestAnimationFrame(loop);
+    if (!S || !S.started || S.paused || S.over){ if (S) draw(); return; }
+    if (!lastTs) lastTs = ts;
+    var dt = ts - lastTs; lastTs = ts;
+    S.acc += dt;
+    var ms = speedMs();
+    while (S.acc >= ms && !S.over){ S.acc -= ms; step(); }
+    draw();
+  }
+  requestAnimationFrame(loop);
+
+  // ---------- 控制 ----------
+  function setDir(x, y){
+    if (!S || !S.started) return;
+    var last = S.queue.length ? S.queue[S.queue.length - 1] : S.dir;
+    if (last.x === x && last.y === y) return;
+    if (S.queue.length < 3) S.queue.push({x:x, y:y});
+  }
+  document.addEventListener('keydown', function(e){
+    var k = e.key;
+    if (k === 'ArrowUp' || k === 'w' || k === 'W'){ setDir(0,-1); e.preventDefault(); }
+    else if (k === 'ArrowDown' || k === 's' || k === 'S'){ setDir(0,1); e.preventDefault(); }
+    else if (k === 'ArrowLeft' || k === 'a' || k === 'A'){ setDir(-1,0); e.preventDefault(); }
+    else if (k === 'ArrowRight' || k === 'd' || k === 'D'){ setDir(1,0); e.preventDefault(); }
+    else if (k === ' '){ togglePause(); e.preventDefault(); }
+  });
+  var tx = 0, ty = 0;
+  cv.addEventListener('touchstart', function(e){ var t = e.changedTouches[0]; tx = t.clientX; ty = t.clientY; }, {passive:true});
+  cv.addEventListener('touchend', function(e){
+    var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+    if (Math.abs(dx) > Math.abs(dy)) setDir(dx > 0 ? 1 : -1, 0); else setDir(0, dy > 0 ? 1 : -1);
+  }, {passive:true});
+  cv.addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
+
+  function startGame(){
+    S = newState(); S.started = true; lastTs = 0;
+    placeOrb();
+    scoreEl.textContent = '0'; lenEl.textContent = S.snake.length;
+    fxEl.innerHTML = '';
+    ovStart.classList.add('hidden'); ovOver.classList.add('hidden'); ovPause.classList.add('hidden');
+    draw();
+  }
+  function togglePause(){
+    if (!S || !S.started || S.over) return;
+    S.paused = !S.paused;
+    ovPause.classList.toggle('hidden', !S.paused);
+    lastTs = 0;
+  }
+  document.getElementById('btnStart').addEventListener('click', startGame);
+  document.getElementById('btnAgain').addEventListener('click', startGame);
+  document.getElementById('btnRestart').addEventListener('click', startGame);
+  document.getElementById('btnPause').addEventListener('click', togglePause);
+  document.getElementById('btnResume').addEventListener('click', togglePause);
+
+  window.addEventListener('resize', fitCanvas);
+  S = newState(); placeOrb();
+  fitCanvas(); draw();
+})();
+</script>
+  <div style="width:min(94vw,430px);margin-top:14px;text-align:center;font-size:13px;color:#94a3b8"><a href="/" style="color:#67e8f9;text-decoration:none">← More free tools at uuidsmith.com</a></div>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "23a5d3ea30ae40dcaec2dadd55201852"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
