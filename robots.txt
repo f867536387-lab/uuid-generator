@@ -1,3 +1,30 @@
+# AI search crawlers: allowed. These decide whether AI answers cite this site.
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+# User-triggered fetchers (a user clicks a link inside an AI chat and the AI fetches it live): allowed.
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+User-agent: Claude-User
+Allow: /
+# Training crawlers: blocked. Blocking these does NOT affect search citations
+# or Google AI Overviews (those follow Googlebot, not Google-Extended).
+User-agent: GPTBot
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+# Everyone else
 User-agent: *
 Allow: /
 Sitemap: https://uuidsmith.com/sitemap.xml
