@@ -25,7 +25,7 @@
 :root{--bg:#0f1115;--card:#171a21;--line:#262b36;--text:#e8eaf0;--muted:#9aa3b2;--accent:#3b82f6}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text)}
 .wrap{max-width:820px;margin:0 auto;padding:32px 20px 64px}
-header{text-align:center;margin-bottom:28px}h1{font-size:34px;margin:0 0 10px}p.lead{color:var(--muted);margin:0;line-height:1.6}
+header{text-align:center;margin-bottom:28px}h1{font-size:44px;letter-spacing:-.02em;margin:0 0 12px}p.lead{color:var(--muted);margin:0;line-height:1.6}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px}
 button{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:12px 22px;font-size:16px;cursor:pointer}
 button.secondary{background:#232833}
@@ -37,14 +37,30 @@ textarea{width:100%;min-height:220px;background:#0f1115;border:1px solid var(--l
 .stat .lab{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.04em}
 .actions{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;align-items:center}
 section h2{font-size:22px;margin:28px 0 10px}section p,section li{color:var(--muted);line-height:1.75}
-footer{color:var(--muted);font-size:13px;text-align:center;margin-top:40px}
+footer{color:var(--muted);font-size:13px;text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);line-height:2}footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--text)}
 code{background:#232833;padding:2px 6px;border-radius:5px;color:var(--text)}
 a{color:var(--accent)}
+.topnav{display:flex;justify-content:space-between;align-items:center;padding:18px 0 22px;border-bottom:1px solid var(--line);margin-bottom:32px}
+.brand{font-weight:700;font-size:18px;color:var(--text);text-decoration:none}
+.topnav nav{display:flex;gap:18px}
+.topnav nav a{color:var(--muted);text-decoration:none;font-size:14px}
+.topnav nav a:hover{color:var(--text)}
+.topnav nav a[aria-current]{color:var(--text)}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+button{transition:background .15s}button:hover{background:#2563eb}button.secondary:hover{background:#2e3542}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:14px}
+.toolcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;text-decoration:none;display:block}
+.toolcard:hover{border-color:#3b4356}
+.toolcard b{color:var(--text);font-size:17px}
+.toolcard p{margin:8px 0 12px}
+.tag{display:inline-block;font-size:12px;color:#7fb0ff;border:1px solid #2b3a55;border-radius:20px;padding:2px 10px}
 </style>
 </head>
 <body>
 <div class="wrap">
+<nav class="topnav"><a class="brand" href="/">uuidsmith</a><nav><a href="/">UUID Generator</a><a href="/sentence-counter" aria-current="page">Sentence Counter</a><a href="/neon-snake">Neon Snake</a></nav></nav>
 <header>
+<p class="eyebrow">Free writing tool</p>
 <h1>Sentence Counter</h1>
 <p class="lead">Count sentences instantly — plus words, characters and paragraphs.<br>Live results as you type. Everything runs in your browser; your text is never uploaded.</p>
 </header>
@@ -82,11 +98,15 @@ a{color:var(--accent)}
 <b>What is a good average sentence length?</b> For general readers, 15–20 words per sentence reads comfortably; averages above 25–30 words usually mean some sentences should be split.<br>
 <b>What counts as a sentence here?</b> A fragment ending in a period, exclamation mark, question mark or ellipsis. Abbreviations (Dr., Mr., e.g.) and decimal points (3.14) do not end a sentence.<br>
 <b>Does it work for languages other than English?</b> Yes, as long as sentences end with . ! ? or …; the counter works on punctuation only and does not translate or check grammar.</p>
-<p><small>Last updated: 2026-10-30.</small></p>
 <h2>More free tools</h2>
-<p><a href="/">UUID Generator</a> — generate UUID v4 in bulk, free and private.</p>
+<div class="tools">
+<a class="toolcard" href="/"><b>UUID Generator</b><p>Generate UUID v4 in bulk, free and private — no sign-up, nothing uploaded.</p><span class="tag">Free</span></a>
+<a class="toolcard" href="/neon-snake"><b>Neon Snake</b><p>A neon snake game with random power-ups and moving obstacles. Free to play in your browser.</p><span class="tag">Free</span></a>
+</div>
 </section>
-<footer>Free Sentence Counter · Runs 100% locally in your browser · Part of <a href="/">uuidsmith.com</a></footer>
+<footer><a href="/">uuidsmith.com</a> — free tools that run 100% in your browser<br>
+<a href="/">UUID Generator</a> · <a href="/sentence-counter">Sentence Counter</a> · <a href="/neon-snake">Neon Snake</a><br>
+Free Sentence Counter · Nothing is uploaded or stored · Last updated: 2026-10-30</footer>
 </div>
 <script>
 const SAMPLE="Dr. Smith checked the results at 3.30 p.m. and smiled. The new method worked 2.5 times faster than the old one! Was anyone surprised? Not really. Clear writing is not an accident. It comes from short, honest sentences — and from counting them once in a while.";
