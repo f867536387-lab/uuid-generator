@@ -52,6 +52,16 @@ button{transition:background .15s}button:hover{background:#2563eb}button.seconda
 .toolcard b{color:var(--text);font-size:17px}
 .toolcard p{margin:8px 0 12px}
 .tag{display:inline-block;font-size:12px;color:#7fb0ff;border:1px solid #2b3a55;border-radius:20px;padding:2px 10px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:0 0 8px}
+.toc b{font-size:14px}
+.toc a{color:var(--muted);text-decoration:none;font-size:14px}
+.toc a:hover{color:var(--text)}
+.toc span{color:var(--line);margin:0 8px}
+pre.codeblock{background:#0f1115;border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto;margin:8px 0 18px}
+pre.codeblock code{background:none;padding:0;font-size:13px;line-height:1.7}
+.codesnip{position:relative}
+.codesnip button.copybtn{position:absolute;top:8px;right:8px;background:#232833;color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer}
+.codesnip button.copybtn:hover{color:var(--text)}
 </style>
 </head>
 <body>
@@ -79,23 +89,34 @@ button{transition:background .15s}button:hover{background:#2563eb}button.seconda
 </div>
 
 <section>
-<h2>What is a UUID?</h2>
+<nav class="toc"><b>On this page:</b> <a href="#what-is-uuid">What is a UUID?</a><span>|</span><a href="#why-v4">Why UUID v4?</a><span>|</span><a href="#how-to-use">How to use</a><span>|</span><a href="#code-examples">Code examples</a><span>|</span><a href="#faq">FAQ</a><span>|</span><a href="#v4-vs-v7">v4 vs v7</a><span>|</span><a href="#more-tools">More free tools</a></nav>
+<h2 id="what-is-uuid">What is a UUID?</h2>
 <p>A UUID (Universally Unique Identifier) is a 128-bit identifier displayed as 32 hexadecimal digits in five groups separated by hyphens — for example <code>550e8400-e29b-41d4-a716-446655440000</code>. Developers use UUIDs as database primary keys, session identifiers, request/trace IDs, file names, and idempotency keys, because they can be generated anywhere without a central authority and still stay unique.</p>
-<h2>Why UUID v4?</h2>
+<h2 id="why-v4">Why UUID v4?</h2>
 <p>UUID version 4 is built from cryptographically random data (122 random bits). The probability of generating the same UUID twice is so low that it is treated as impossible in practice — you would need to generate billions per second for centuries to expect a single collision.</p>
-<h2>How to use this generator</h2>
+<h2 id="how-to-use">How to use this generator</h2>
 <ol>
 <li>Choose how many UUIDs you need (1 to 100).</li>
 <li>Optionally switch on UPPERCASE or turn hyphens off.</li>
 <li>Click <b>Generate UUIDs</b>, then copy them all or download a .txt file (one UUID per line).</li>
 </ol>
-<h2>FAQ</h2>
+<h2 id="code-examples">Use UUIDs in code</h2>
+<p>Copy a snippet and paste it into your own project. All three generate standard UUID v4 values.</p>
+<p><b>Python</b></p>
+<div class="codesnip"><pre class="codeblock"><code>import uuid
+print(uuid.uuid4())</code></pre><button class="copybtn" onclick="copyCode(this)">Copy</button></div>
+<p><b>JavaScript (browser)</b></p>
+<div class="codesnip"><pre class="codeblock"><code>crypto.randomUUID()</code></pre><button class="copybtn" onclick="copyCode(this)">Copy</button></div>
+<p><b>PostgreSQL (primary key default)</b></p>
+<div class="codesnip"><pre class="codeblock"><code>id UUID PRIMARY KEY DEFAULT gen_random_uuid()</code></pre><button class="copybtn" onclick="copyCode(this)">Copy</button></div>
+<h2 id="faq">FAQ</h2>
 <p><b>Is it free?</b> Yes, completely free with no sign-up.<br>
 <b>Is it private?</b> Yes. This page uses your browser's Web Crypto API (<code>crypto.randomUUID()</code>). No UUID ever leaves your device.<br>
 <b>Can I use these UUIDs in production?</b> Yes. They are standard RFC 4122 version 4 UUIDs, suitable for databases and APIs.</p>
-<h2>UUID v4 vs v7: which one should you use?</h2>
+<h2 id="v4-vs-v7">UUID v4 vs v7: which one should you use?</h2>
 <p>UUID v4 is random: 122 of its 128 bits are random, so collisions are practically impossible, and it works anywhere you need an unpredictable unique ID. UUID v7 (defined in RFC 9562, published May 2024) is time-ordered: it starts with a 48-bit Unix timestamp in milliseconds, followed by random bits, so IDs sort in creation order and are friendlier to database indexes. Use v4 for general-purpose unique IDs and anywhere unpredictability matters; use v7 when you store IDs in a database and query or sort by creation time. This page generates v4 only.</p>
-<h2>More free tools</h2>
+<h2 id="more-tools">More free tools</h2>
+<p>More tools from uuidsmith, all free and private — no sign-up, nothing uploaded.</p>
 <div class="tools">
 <a class="toolcard" href="/sentence-counter"><b>Sentence Counter</b><p>Count sentences, words, characters and paragraphs in your text, live as you type.</p><span class="tag">Free</span></a>
 <a class="toolcard" href="/neon-snake"><b>Neon Snake</b><p>A neon snake game with random power-ups and moving obstacles. Free to play in your browser.</p><span class="tag">Free</span></a>
@@ -103,7 +124,7 @@ button{transition:background .15s}button:hover{background:#2563eb}button.seconda
 </section>
 <footer><a href="/">uuidsmith.com</a> — free tools that run 100% in your browser<br>
 <a href="/">UUID Generator</a> · <a href="/sentence-counter">Sentence Counter</a> · <a href="/neon-snake">Neon Snake</a><br>
-Free UUID Generator · UUID v4 · Nothing is uploaded or stored · Last updated: 2026-10-30</footer>
+Free UUID Generator · UUID v4 · Nothing is uploaded or stored · Last updated: 2026-10-31</footer>
 </div>
 <script>
 function makeUUID(){
@@ -133,6 +154,13 @@ document.getElementById('download').addEventListener('click',()=>{
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([v],{type:'text/plain'})); a.download='uuids.txt'; a.click(); URL.revokeObjectURL(a.href);
 });
+function copyCode(btn){
+  const txt = btn.parentElement.querySelector('code').innerText;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const old = btn.textContent; btn.textContent = 'Copied';
+    setTimeout(()=>{ btn.textContent = old; }, 1500);
+  });
+}
 generate();
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "23a5d3ea30ae40dcaec2dadd55201852"}'></script><!-- End Cloudflare Web Analytics -->
